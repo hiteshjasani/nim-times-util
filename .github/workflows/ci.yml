@@ -27,7 +27,7 @@ jobs:
 
     # Build and publish image
     - name: Build
-      run: docker build -t $AUTHOR/$REPO:$IMAGE-$VERSION -f dockerfiles/$IMAGE-build .
+      run: docker build -t $AUTHOR/$REPO:$IMAGE-$VERSION -f dockerfiles/test-build .
 
     - name: Post build list docker images
       run: docker images
