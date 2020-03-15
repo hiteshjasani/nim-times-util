@@ -6,5 +6,5 @@ WORKDIR /src/project/nim_times_util
 
 # Remove all the source code from final image
 RUN nimble refresh \
-  && nimble build -y \
+  && nimble build -y
 
