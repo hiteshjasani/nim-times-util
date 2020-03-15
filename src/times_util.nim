@@ -1,4 +1,4 @@
-import times
+import sequtils, times
 
 export times
 
@@ -24,6 +24,30 @@ proc today*(): DateTime =
   ## Today at midnight in the default (UTC) timezone
   let n = now().utc()
   day(n.year, n.month, n.monthday, n.timezone)
+
+proc thisDay*(dt: DateTime): DateTime =
+  ## Start of the day
+  day(dt.year, dt.month, dt.monthDay, dt.timezone)
+
+proc thisMonth*(dt: DateTime): DateTime =
+  ## Start of the first day of this month
+  day(dt.year, dt.month, 1, dt.timezone)
+
+proc thisYear*(dt: DateTime): DateTime =
+  ## Start of the first day of this year
+  day(dt.year, mJan, 1, dt.timezone)
+
+proc daysInMonth*(dt: DateTime): seq[DateTime] =
+  ## Get a sequence of DateTimes for the start of each day in the month.
+  let lastDay = getDaysInMonth(dt.month, dt.year)
+  let dateRange = toSeq(1..lastDay)
+  result = map(dateRange, proc (x: int): DateTime =
+                              day(dt.year, dt.month, x))
+
+proc monthsInYear*(dt: DateTime): seq[DateTime] =
+  ## Get a sequence of DateTimes for the start of each month.
+  map(toSeq(mJan..mDec), proc(x: Month): DateTime =
+                             day(dt.year, x, 1))
 
 proc fmt*(dt: DateTime, style: Style): string =
   ## Format the date/time as a string.

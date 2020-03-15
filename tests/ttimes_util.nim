@@ -21,6 +21,59 @@ suite "Creating days":
     let exp = today()
     check(exp == fmt(now().utc(), stISO8601c).parse(stISO8601c))
 
+suite "Date calculations":
+  test "this day":
+    check:
+      "2020-03-29 00:00:00Z" == initDateTime(29, mMar, 2020, 8, 19, 42,
+                                             utc())
+                                  .thisDay().fmt(stISO8601a)
+
+  test "this month":
+    check:
+      "2020-01-01 00:00:00Z" == day(2020, mJan, 15)
+                                  .thisMonth().fmt(stISO8601a)
+      "2020-02-01 00:00:00Z" == day(2020, mFeb, 28)
+                                  .thisMonth().fmt(stISO8601a)
+  test "this year":
+    check:
+      "2020-01-01 00:00:00Z" == day(2020, mJun, 13)
+                                  .thisYear().fmt(stISO8601a)
+      "2020-01-01 00:00:00Z" == day(2020, mDec, 31)
+                                  .thisYear().fmt(stISO8601a)
+
+suite "Days in the month":
+  test "january":
+    let days = daysInMonth(day(2020, mJan, 19))
+    check 31 == len(days)
+    check "2020-01-01 00:00:00Z" == fmt(days[0], stISO8601a)
+    check "2020-01-31 00:00:00Z" == fmt(days[^1], stISO8601a)
+  test "february 2019, normal year":
+    let days = daysInMonth(day(2019, mFeb, 12))
+    check 28 == len(days)
+    check "2019-02-01 00:00:00Z" == fmt(days[0], stISO8601a)
+    check "2019-02-28 00:00:00Z" == fmt(days[^1], stISO8601a)
+  test "february 2020, leap year":
+    let days = daysInMonth(day(2020, mFeb, 12))
+    check 29 == len(days)
+    check "2020-02-01 00:00:00Z" == fmt(days[0], stISO8601a)
+    check "2020-02-29 00:00:00Z" == fmt(days[^1], stISO8601a)
+  test "april 2020":
+    let days = daysInMonth(day(2020, mApr, 12))
+    check 30 == len(days)
+    check "2020-04-01 00:00:00Z" == fmt(days[0], stISO8601a)
+    check "2020-04-30 00:00:00Z" == fmt(days[^1], stISO8601a)
+  test "december":
+    let days = daysInMonth(day(2020, mDec, 18))
+    check 31 == len(days)
+    check "2020-12-01 00:00:00Z" == fmt(days[0], stISO8601a)
+    check "2020-12-31 00:00:00Z" == fmt(days[^1], stISO8601a)
+
+suite "Months in the year":
+  test "any year":
+    let months = monthsInYear(day(2020, mApr, 1))
+    check 12 == len(months)
+    check "2020-01-01 00:00:00Z" == fmt(months[0], stISO8601a)
+    check "2020-12-01 00:00:00Z" == fmt(months[^1], stISO8601a)
 
 suite "Roundtripping":
   test "starting with ISO8601a":
