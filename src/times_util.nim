@@ -12,34 +12,18 @@ type
     stISO8601c = "yyyy-MM-dd"                # 2020-03-01
 
 
-proc day*(year: int, month: Month, dayOfMonth: MonthdayRange): DateTime =
-  ## At midnight for specified day in local timezone
-  initDateTime(dayOfMonth, month, year, 0, 0, 0)
-
-proc midnight*(year: int, month: Month, dayOfMonth: MonthdayRange): DateTime
-  {.deprecated: "use day instead".} =
-  ## At midnight for specified day in local timezone
-  day(year, month, dayOfMonth)
+proc day*(year: int, month: Month, dayOfMonth: MonthdayRange,
+          timeZone: Timezone = utc()): DateTime =
+  ## At midnight for specified day in timezone
+  ##
+  ## Defaulting to UTC timezone makes this consistent across platforms and
+  ## configurations.  If you need custom results, pass in a your own Timezone.
+  initDateTime(dayOfMonth, month, year, 0, 0, 0, timezone)
 
 proc today*(): DateTime =
-  ## Today at midnight in the local timezone
-  let n = now()
-  day(n.year, n.month, n.monthday)
-
-proc midnightToday*(): DateTime {.deprecated: "use today instead".} =
-  today()
-
-proc asDayUS*(dt: DateTime, style: int): string
-  {.deprecated: "use fmt instead".} =
-  case style
-  of 1:
-    format(dt, "ddd MMM d, YYYY")
-  of 2:
-    format(dt, "ddd MMM d")
-  of 3:
-    format(dt, "ddd MMM d, YYYY")
-  else:
-    "unsupported style"
+  ## Today at midnight in the default (UTC) timezone
+  let n = now().utc()
+  day(n.year, n.month, n.monthday, n.timezone)
 
 proc fmt*(dt: DateTime, style: Style): string =
   ## Format the date/time as a string.
@@ -52,5 +36,15 @@ proc fmt*(dt: DateTime, style: Style): string =
   ##   check t == fmt(t, stUs1).parse(stUs1)            # fails
   format(dt, $style)
 
-proc parse*(s: string, style: Style): DateTime =
-  parse(s, $style)
+proc parse*(s: string, style: Style, timeZone: Timezone = utc()): DateTime =
+  ## Parse the string as a date/time
+  ##
+  ## Default timezone is UTC for consistency across all platforms and settings.
+  ##
+  ## Some styles are lossy, as in they lose time information and
+  ## therefore won't work in a roundtripping situation.
+  ##
+  ##   let t = initDatetime(31, mDec, 2019, 23, 59, 50)
+  ##   check t == fmt(t, stIso8601a).parse(stIso8601a)  # works
+  ##   check t == fmt(t, stUs1).parse(stUs1)            # fails
+  parse(s, $style, timeZone)
