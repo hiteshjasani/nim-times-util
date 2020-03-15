@@ -1,0 +1,32 @@
+name: CI
+
+
+jobs:
+  build:
+    env:
+      AUTHOR: hiteshjasani
+      REPO: local
+      IMAGE: nim_times_util
+      VERSION: 0.1.0
+
+    # runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
+
+    steps:
+    - name: debug info
+      run: |
+        echo "event name = ${{ github.event_name }}"
+        echo "sha = ${{ github.sha }}"
+        echo "ref = ${{ github.ref }}"
+        echo "head ref = ${{ github.head_ref }}"
+        echo "base ref = ${{ github.base_ref }}"
+
+    - uses: actions/checkout@v1
+
+
+    # Build and publish image
+    - name: Build
+      run: docker build -t $AUTHOR/$REPO:$IMAGE-$VERSION -f dockerfiles/$IMAGE-build .
+
+    - name: Post build list docker images
+      run: docker images
