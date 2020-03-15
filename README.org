@@ -1,0 +1,5 @@
+#+TITLE: nim-times-util
+
+[[https://github.com/hiteshjasani/nim-times-util/workflows/CI/badge.svg
+
+Nim library of useful functions when working with dates and times.

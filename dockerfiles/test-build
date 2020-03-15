@@ -2,9 +2,9 @@ FROM nimlang/nim:1.0.6-ubuntu as build
 
 COPY . /src/project
 
-WORKDIR /src/project/nim_times_util
+WORKDIR /src/project
 
 # Remove all the source code from final image
 RUN nimble refresh \
-  && nimble build -y
+  && nimble test -y
 
