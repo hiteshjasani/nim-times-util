@@ -37,6 +37,23 @@ proc thisYear*(dt: DateTime): DateTime =
   ## Start of the first day of this year
   day(dt.year, mJan, 1, dt.timezone)
 
+proc daysInWeek*(dt: DateTime): seq[DateTime] =
+  ## Get a sequence of DateTimes for the days in this week.
+  ##
+  ## The week starts on sunday and ends on saturday.
+  let curWeekDay = dt.weekday
+  let offset = case dt.weekday
+               of dMon: -1
+               of dTue: -2
+               of dWed: -3
+               of dThu: -4
+               of dFri: -5
+               of dSat: -6
+               of dSun: 0
+  let startDate = thisDay(dt) + days(offset)
+  result = map(toSeq(0..6), proc(x:int): DateTime =
+                                startDate + days(x))
+
 proc daysInMonth*(dt: DateTime): seq[DateTime] =
   ## Get a sequence of DateTimes for the start of each day in the month.
   let lastDay = getDaysInMonth(dt.month, dt.year)

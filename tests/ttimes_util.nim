@@ -21,6 +21,7 @@ suite "Creating days":
     let exp = today()
     check(exp == fmt(now().utc(), stISO8601c).parse(stISO8601c))
 
+
 suite "Date calculations":
   test "this day":
     check:
@@ -40,6 +41,65 @@ suite "Date calculations":
                                   .thisYear().fmt(stISO8601a)
       "2020-01-01 00:00:00Z" == day(2020, mDec, 31)
                                   .thisYear().fmt(stISO8601a)
+
+
+suite "Days in the week":
+  test "given sunday":
+    let givenDay = initDateTime(15, mMar, 2020, 8, 45, 22, utc())
+    let week = daysInWeek(givenDay)
+    check 7 == len(week)
+    check day(2020, mMar, 15) == week[0]
+    check day(2020, mMar, 16) == week[1]
+    check day(2020, mMar, 17) == week[2]
+    check day(2020, mMar, 18) == week[3]
+    check day(2020, mMar, 19) == week[4]
+    check day(2020, mMar, 20) == week[5]
+    check day(2020, mMar, 21) == week[6]
+  test "given monday":
+    let givenDay = initDateTime(16, mMar, 2020, 8, 45, 22, utc())
+    let week = daysInWeek(givenDay)
+    check 7 == len(week)
+    check day(2020, mMar, 15) == week[0]
+    check day(2020, mMar, 16) == week[1]
+    check day(2020, mMar, 17) == week[2]
+    check day(2020, mMar, 18) == week[3]
+    check day(2020, mMar, 19) == week[4]
+    check day(2020, mMar, 20) == week[5]
+    check day(2020, mMar, 21) == week[6]
+  test "given tuesday across month boundary":
+    let givenDay = initDateTime(31, mMar, 2020, 8, 45, 22, utc())
+    let week = daysInWeek(givenDay)
+    check 7 == len(week)
+    check day(2020, mMar, 29) == week[0]
+    check day(2020, mMar, 30) == week[1]
+    check day(2020, mMar, 31) == week[2]
+    check day(2020, mApr, 1) == week[3]
+    check day(2020, mApr, 2) == week[4]
+    check day(2020, mApr, 3) == week[5]
+    check day(2020, mApr, 4) == week[6]
+  test "given wednesday across year boundary":
+    let givenDay = initDateTime(30, mDec, 2020, 8, 45, 22, utc())
+    let week = daysInWeek(givenDay)
+    check 7 == len(week)
+    check day(2020, mDec, 27) == week[0]
+    check day(2020, mDec, 28) == week[1]
+    check day(2020, mDec, 29) == week[2]
+    check day(2020, mDec, 30) == week[3]
+    check day(2020, mDec, 31) == week[4]
+    check day(2021, mJan, 1) == week[5]
+    check day(2021, mJan, 2) == week[6]
+  test "given saturday across month boundary":
+    let givenDay = initDateTime(4, mApr, 2020, 8, 45, 22, utc())
+    let week = daysInWeek(givenDay)
+    check 7 == len(week)
+    check day(2020, mMar, 29) == week[0]
+    check day(2020, mMar, 30) == week[1]
+    check day(2020, mMar, 31) == week[2]
+    check day(2020, mApr, 1) == week[3]
+    check day(2020, mApr, 2) == week[4]
+    check day(2020, mApr, 3) == week[5]
+    check day(2020, mApr, 4) == week[6]
+
 
 suite "Days in the month":
   test "january":
@@ -68,12 +128,14 @@ suite "Days in the month":
     check "2020-12-01 00:00:00Z" == fmt(days[0], stISO8601a)
     check "2020-12-31 00:00:00Z" == fmt(days[^1], stISO8601a)
 
+
 suite "Months in the year":
   test "any year":
     let months = monthsInYear(day(2020, mApr, 1))
     check 12 == len(months)
     check "2020-01-01 00:00:00Z" == fmt(months[0], stISO8601a)
     check "2020-12-01 00:00:00Z" == fmt(months[^1], stISO8601a)
+
 
 suite "Roundtripping":
   test "starting with ISO8601a":
